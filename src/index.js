@@ -1,49 +1,59 @@
-import fs from 'fs';
-import path from 'path';
+'use strict';
 
-import MagicString from 'magic-string';
-import { createFilter } from 'rollup-pluginutils';
+function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'default' in ex) ? ex['default'] : ex; }
 
-const moduleIdRegex = /moduleId\s*:(.*)/g;
-const componentRegex = /@Component\(\s?{([\s\S]*)}\s?\)$/gm;
-const templateUrlRegex = /templateUrl\s*:(.*)/g;
-const styleUrlsRegex = /styleUrls\s*:(\s*\[[\s\S]*?\])/g;
-const stringRegex = /(['"])((?:[^\\]\\\1|.)*?)\1/g;
+var fs = _interopDefault(require('fs'));
+var path = _interopDefault(require('path'));
+var MagicString = _interopDefault(require('magic-string'));
+var rollupPluginutils = require('rollup-pluginutils');
 
-function insertText(str, dir, preprocessor = res => res, processFilename = false) {
+var moduleIdRegex = /moduleId\s*:(.*)/g;
+var componentRegex = /Component\(\s?{([\s\S]*)}\s?\),$/gm;
+var templateUrlRegex = /templateUrl\s*:(.*)/g;
+var styleUrlsRegex = /styleUrls\s*:(\s*\[[\s\S]*?\])/g;
+var stringRegex = /(['"])((?:[^\\]\\\1|.)*?)\1/g;
+
+function insertText(str, dir, preprocessor, processFilename) {
+  if ( preprocessor === void 0 ) preprocessor = function (res) { return res; };
+  if ( processFilename === void 0 ) processFilename = false;
+
   return str.replace(stringRegex, function (match, quote, url) {
-    const includePath = path.join(dir, url);
+    var includePath = path.join(dir, url);
     if (processFilename) {
-      return '`' + preprocessor(includePath) + '`';
+      return '"' + preprocessor(includePath) + '"';
     }
-    const text = fs.readFileSync(includePath).toString();
-    return '`' + preprocessor(text, includePath) + '`';
+    var text = fs.readFileSync(includePath).toString();
+    return '"' + preprocessor(text, includePath) + '"';
   });
 }
 
-export default function angular(options = {}) {
+function angular(options) {
+  if ( options === void 0 ) options = {};
+
   options.preprocessors = options.preprocessors || {};
 
   // ignore @angular/** modules
   options.exclude = options.exclude || [];
-  if (typeof options.exclude === 'string' || options.exclude instanceof String) options.exclude = [options.exclude];
-  if (options.exclude.indexOf('node_modules/@angular/**') === -1) options.exclude.push('node_modules/@angular/**');
+  if (typeof options.exclude === 'string' || options.exclude instanceof String) { options.exclude = [options.exclude]; }
+  if (options.exclude.indexOf('node_modules/@angular/**') === -1) { options.exclude.push('node_modules/@angular/**'); }
 
-  const filter = createFilter(options.include, options.exclude);
+  var filter = rollupPluginutils.createFilter(options.include, options.exclude);
 
   return {
     name: 'angular',
-    transform(source, map) {
-      if (!filter(map)) return;
+    transform: function transform(source, map) {
+      if (!filter(map)) { return; }
 
-      const magicString = new MagicString(source);
-      const dir = path.parse(map).dir;
+      var magicString = new MagicString(source);
+      var dir = path.parse(map).dir;
 
-      let hasReplacements = false;
-      let match;
-      let start, end, replacement;
+      var hasReplacements = false;
+      var match;
+      var start, end, replacement;
 
       while ((match = componentRegex.exec(source)) !== null) {
+        console.log('source', source);
+
         start = match.index;
         end = start + match[0].length;
 
@@ -53,6 +63,8 @@ export default function angular(options = {}) {
             return 'template:' + insertText(url, dir, options.preprocessors.template, options.processFilename);
           })
           .replace(styleUrlsRegex, function (match, urls) {
+            console.log('style match', match);
+            console.log('style urls', match);
             hasReplacements = true;
             return 'styles:' + insertText(urls, dir, options.preprocessors.style, options.processFilename);
           })
@@ -61,15 +73,17 @@ export default function angular(options = {}) {
             return '';
           });
 
-        if (hasReplacements) magicString.overwrite(start, end, replacement);
+        if (hasReplacements) { magicString.overwrite(start, end, replacement); }
       }
 
-      if (!hasReplacements) return null;
+      if (!hasReplacements) { return null; }
 
-      let result = { code: magicString.toString() };
-      if (options.sourceMap !== false) result.map = magicString.generateMap({ hires: true });
+      var result = { code: magicString.toString() };
+      if (options.sourceMap !== false) { result.map = magicString.generateMap({ hires: true }); }
 
       return result;
     }
   };
 }
+
+module.exports = angular;

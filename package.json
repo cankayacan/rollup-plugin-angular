@@ -1,7 +1,7 @@
 {
-  "name": "rollup-plugin-angular",
-  "version": "0.4.4",
-  "description": "Angular2 template and styles inliner",
+  "name": "rollup-plugin-angular-aot",
+  "version": "0.0.2",
+  "description": "Angular2 template and styles inliner for AOT",
   "main": "dist/rollup-plugin-angular.js",
   "module": "dist/rollup-plugin-angular.esm.js",
   "scripts": {
@@ -18,10 +18,10 @@
   "files": [
     "dist"
   ],
-  "author": "Felix Itzenplitz",
+  "author": "Can Kayacan",
   "repository": {
     "type": "git",
-    "url": "https://github.com/cebor/rollup-plugin-angular.git"
+    "url": "https://github.com/cankayacan/rollup-plugin-angular.git"
   },
   "license": "MIT",
   "dependencies": {

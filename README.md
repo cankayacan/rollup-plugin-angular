@@ -1,17 +1,24 @@
 [![Build Status](https://travis-ci.org/cebor/rollup-plugin-angular.svg?branch=master)](https://travis-ci.org/cebor/rollup-plugin-angular)
 
-# rollup-plugin-angular
+# Prequisite
+You need to copy all the templates & sass files manually to the aot outdir (set in the tsconfig.json) before bundling.
+```javascript
+copyfiles src/**/*.scss dist
+copyfiles src/**/*.html dist
+```
+
+# rollup-plugin-angular-aot
 Angular2 template and styles inliner for rollup
 
 ## Installation
 ```bash
-npm install --save-dev rollup-plugin-angular
+npm install --save-dev rollup-plugin-angular-aot
 ```
 
 ## Example
 ```javascript
 // rollup.config.js
-import angular from 'rollup-plugin-angular';
+import angular from 'rollup-plugin-angular-aot';
 import typescript from 'rollup-plugin-typescript';
 import alias from 'rollup-plugin-alias';
 import nodeResolve from 'rollup-plugin-node-resolve';
@@ -52,7 +59,7 @@ The following example shows how you can use sass, clean-css (for css minificatio
 
 ```javascript
 // rollup.config.js
-import angular from 'rollup-plugin-angular';
+import angular from 'rollup-plugin-angular-aot';
 import typescript from 'rollup-plugin-typescript';
 import nodeResolve from 'rollup-plugin-node-resolve';
 import sass from 'node-sass';
