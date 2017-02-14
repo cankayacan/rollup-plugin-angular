@@ -8,7 +8,7 @@ var MagicString = _interopDefault(require('magic-string'));
 var rollupPluginutils = require('rollup-pluginutils');
 
 var moduleIdRegex = /moduleId\s*:(.*)/g;
-var componentRegex = /Component\(\s?{([\s\S]*)}\s?\),$/gm;
+var componentRegex = /Component\(\s?{([\s\S]*)}\s?\)(,)?$/gm;
 var templateUrlRegex = /templateUrl\s*:(.*)/g;
 var styleUrlsRegex = /styleUrls\s*:(\s*\[[\s\S]*?\])/g;
 var stringRegex = /(['"])((?:[^\\]\\\1|.)*?)\1/g;
