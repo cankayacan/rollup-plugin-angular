@@ -20,10 +20,10 @@ function insertText(str, dir, preprocessor, processFilename) {
   return str.replace(stringRegex, function (match, quote, url) {
     var includePath = path.join(dir, url);
     if (processFilename) {
-      return '"' + preprocessor(includePath) + '"';
+      return '\'' + preprocessor(includePath) + '\'';
     }
     var text = fs.readFileSync(includePath).toString();
-    return '"' + preprocessor(text, includePath) + '"';
+    return '\'' + preprocessor(text, includePath) + '\'';
   });
 }
 
